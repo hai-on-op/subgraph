@@ -1,5 +1,5 @@
 {
-  "NETWORK": "mainnet",
+  "NETWORK": "optimism",
   "PROXY_REGISTRY_STARTING_BLOCK": "",
   "ETH_FROM": "",
   "STARTING_BLOCK_NUMBER": "115649646",
