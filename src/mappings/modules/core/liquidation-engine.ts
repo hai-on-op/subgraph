@@ -56,10 +56,10 @@ export function handleModifyParameters(
   let collateral = getOrCreateCollateral(event.params._cType, event)
 
   if (what == 'liquidationPenalty') {
-    let data = BigInt.fromUnsignedBytes(event.params._data)
+    let data = bytes.toUnsignedInt(event.params._data)
     collateral.liquidationPenalty = decimal.fromWad(data)
   } else if (what == 'liquidationQuantity') {
-    let data = BigInt.fromUnsignedBytes(event.params._data)
+    let data = bytes.toUnsignedInt(event.params._data)
     collateral.liquidationQuantity = decimal.fromRad(data)
   } else if (what == 'collateralAuctionHouse') {
     // Configure auction type

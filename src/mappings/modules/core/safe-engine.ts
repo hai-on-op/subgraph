@@ -30,6 +30,7 @@ import {
 } from '../../../../generated/SAFEEngine/SAFEEngine'
 
 import * as decimal from '../../../utils/decimal'
+import * as bytes from '../../../utils/bytes'
 import * as integer from '../../../utils/integer'
 import { getOrCreateCollateral } from '../../../entities/collateral'
 import {
@@ -76,18 +77,18 @@ export function handleModifyParameters(event: ModifyParameters): void {
   let collateral = CollateralType.load(collateralType)
 
   if (what == 'globalDebtCeiling') {
-    system.globalDebtCeiling = decimal.fromRad(integer.BigInt.fromUnsignedBytes(data))
+    system.globalDebtCeiling = decimal.fromRad(bytes.toUnsignedInt(data))
     system.save()
   } else if (what == 'safeDebtCeiling') {
-    system.perSafeDebtCeiling = decimal.fromWad(integer.BigInt.fromUnsignedBytes(data))
+    system.perSafeDebtCeiling = decimal.fromWad(bytes.toUnsignedInt(data))
     system.save()
   } else if (collateral != null) {
     if (what == 'safetyPrice') {
       // Safety  price is stored on the current price object
     } else if (what == 'debtCeiling') {
-      collateral.debtCeiling = decimal.fromRad(integer.BigInt.fromUnsignedBytes(data))
+      collateral.debtCeiling = decimal.fromRad(bytes.toUnsignedInt(data))
     } else if (what == 'debtFloor') {
-      collateral.debtFloor = decimal.fromRad(integer.BigInt.fromUnsignedBytes(data))
+      collateral.debtFloor = decimal.fromRad(bytes.toUnsignedInt(data))
     } else if (what == 'liquidationPrice') {
       // Liquidation price is stored on the current price object
     } else {
