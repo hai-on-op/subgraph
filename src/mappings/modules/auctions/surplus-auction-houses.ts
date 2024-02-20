@@ -23,7 +23,7 @@ export function handleModifyParameters(event: ModifyParameters): void {
     dataSource.address(),
     enums.EnglishAuctionType_SURPLUS,
   )
-  let data = toUnsignedInt(event.params._data, false)
+  let data = toUnsignedInt(event.params._data)
   modifyParameter(config, event.params._param.toString(), data)
 }
 
