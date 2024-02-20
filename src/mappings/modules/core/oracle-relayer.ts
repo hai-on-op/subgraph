@@ -143,12 +143,12 @@ export function handleModifyParameters(
     collateral.save()
   } else if (what == 'safetyCRatio') {
     if (collateralType != null) {
-      collateralType.safetyCRatio = decimal.fromRay(integer.BigInt.fromUnsignedBytes(event.params._data))
+      collateralType.safetyCRatio = decimal.fromRay(bytes.toUnsignedInt(event.params._data))
       collateralType.save()
     }
   } else if (what == 'liquidationCRatio') {
     if (collateralType != null) {
-      collateralType.liquidationCRatio = decimal.fromRay(integer.BigInt.fromUnsignedBytes(event.params._data))
+      collateralType.liquidationCRatio = decimal.fromRay(bytes.toUnsignedInt(event.params._data))
       collateralType.save()
     }
   } else  if (what == 'redemptionPrice') {

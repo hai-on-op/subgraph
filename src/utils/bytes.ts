@@ -16,7 +16,9 @@ export function toSignedInt(
 
 export function toUnsignedInt(value: Bytes, bigEndian: boolean = true): BigInt {
   if (bigEndian) {
-    return BigInt.fromUnsignedBytes(value.reverse() as Bytes)
+    let bytesVal = value.reverse()
+    let bytesRet = changetype<Bytes>(bytesVal)
+    return BigInt.fromUnsignedBytes(bytesRet)
   } else {
     return BigInt.fromUnsignedBytes(value)
   }

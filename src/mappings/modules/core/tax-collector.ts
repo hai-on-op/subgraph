@@ -11,6 +11,7 @@ import { TaxCollector as TaxcollectorBind } from '../../../../generated/TaxColle
 import { getSystemState, getOrCreateCollateral } from '../../../entities'
 import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
+import * as bytes from '../../../utils/bytes'
 import { addAuthorization, removeAuthorization } from '../governance/authorizations'
 
 // TODO: Authorizations
@@ -40,7 +41,7 @@ export function handleModifyParameters(
 
   if (what == 'stabilityFee') {
     let collateral = getOrCreateCollateral(event.params._cType, event)
-    let data = decimal.fromRay(integer.BigInt.fromUnsignedBytes(event.params._data))
+    let data = decimal.fromRay(bytes.toUnsignedInt(event.params._data))
 
     collateral.stabilityFee = data
     collateral.stabilityFeeLastUpdatedAt = event.block.timestamp
@@ -54,7 +55,7 @@ export function handleModifyParameters(
     )
     collateral.save()
   } else if (what == 'globalStabilityFee') {
-    let data = decimal.fromRay(integer.BigInt.fromUnsignedBytes(event.params._data))
+    let data = decimal.fromRay(bytes.toUnsignedInt(event.params._data))
 
     let system = getSystemState(event)
     system.globalStabilityFee = data
