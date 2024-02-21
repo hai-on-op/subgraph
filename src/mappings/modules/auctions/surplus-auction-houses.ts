@@ -53,7 +53,7 @@ export function handleIncreaseBidSize(event: IncreaseBidSize): void {
 
 function increaseBidSize(
   id: BigInt,
-  bidAmount: BigDecimal,
+  soldAmount: BigDecimal,
   raiseAmount: BigDecimal,
   highBidder: Bytes,
   bidExpiry: BigInt,
@@ -66,7 +66,7 @@ function increaseBidSize(
     bid.bidNumber = auction.numberOfBids
     bid.type = enums.EnglishBidType_INCREASE_BUY
     bid.auction = auction.id
-    bid.sellAmount = bidAmount
+    bid.sellAmount = soldAmount
     bid.buyAmount = raiseAmount
     bid.price = bid.sellAmount.div(bid.buyAmount)
     bid.bidder = highBidder
