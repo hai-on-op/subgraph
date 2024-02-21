@@ -43,7 +43,8 @@ function modifyParameter(config: EnglishAuctionConfiguration, what: string, val:
 export function handleIncreaseBidSize(event: IncreaseBidSize): void {
   increaseBidSize(
     event.params._id,
-    decimal.fromWad(event.params._soldAmount),
+    decimal.fromRad(event.params._soldAmount),
+    decimal.fromWad(event.params._raisedAmount),
     event.params._bidder,
     event.params._bidExpiry,
     event,
@@ -53,6 +54,7 @@ export function handleIncreaseBidSize(event: IncreaseBidSize): void {
 function increaseBidSize(
   id: BigInt,
   bidAmount: BigDecimal,
+  raiseAmount: BigDecimal,
   highBidder: Bytes,
   bidExpiry: BigInt,
   event: ethereum.Event,
@@ -64,8 +66,8 @@ function increaseBidSize(
     bid.bidNumber = auction.numberOfBids
     bid.type = enums.EnglishBidType_INCREASE_BUY
     bid.auction = auction.id
-    bid.sellAmount = auction.sellInitialAmount
-    bid.buyAmount = bidAmount
+    bid.sellAmount = bidAmount
+    bid.buyAmount = raiseAmount
     bid.price = bid.sellAmount.div(bid.buyAmount)
     bid.bidder = highBidder
     bid.createdAt = event.block.timestamp
