@@ -24,7 +24,7 @@ export function handleModifyParameters(event: ModifyParameters): void {
     dataSource.address(),
     enums.EnglishAuctionType_DEBT,
   )
-  let val = toUnsignedInt(event.params._data, false)
+  let val = toUnsignedInt(event.params._data)
 
   if (what == 'bidIncrease') {
     config.bidIncrease = decimal.fromWad(val)
