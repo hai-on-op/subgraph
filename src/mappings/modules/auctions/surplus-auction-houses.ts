@@ -6,6 +6,8 @@ import {
   AddAuthorization,
   RemoveAuthorization,
 } from '../../../../generated/SurplusAuctionHouse/SurplusAuctionHouse'
+import { UserProxy, User } from '../../../../generated/schema'
+
 
 import { EnglishAuctionConfiguration, EnglishAuctionBid, EnglishAuction } from '../../../entities'
 import { BigInt, ethereum, BigDecimal, Bytes, dataSource } from '@graphprotocol/graph-ts'
@@ -17,6 +19,8 @@ import * as enums from '../../../utils/enums'
 import { getOrCreateEnglishAuctionConfiguration } from '../../../entities/auctions'
 import { addAuthorization, removeAuthorization } from '../governance/authorizations'
 import { getOrCreateAccountingEngine } from '../../../entities/accounting-engine'
+import { findProxy } from '../proxy/proxy-factory'
+
 
 export function handleModifyParameters(event: ModifyParameters): void {
   let config = getOrCreateEnglishAuctionConfiguration(
@@ -63,6 +67,14 @@ function increaseBidSize(
   if (auction != null) {
     let bid = new EnglishAuctionBid(bidAuctionId(id, auction.numberOfBids))
 
+    let proxy = findProxy(highBidder)
+    if (proxy != null) {
+      let owner = User.load(proxy.owner)
+      if (owner != null) {
+        bid.owner = owner.address
+      }
+    }
+
     bid.bidNumber = auction.numberOfBids
     bid.type = enums.EnglishBidType_INCREASE_BUY
     bid.auction = auction.id
@@ -70,6 +82,7 @@ function increaseBidSize(
     bid.buyAmount = raiseAmount
     bid.price = bid.sellAmount.div(bid.buyAmount)
     bid.bidder = highBidder
+
     bid.createdAt = event.block.timestamp
     bid.createdAtBlock = event.block.number
     bid.createdAtTransaction = event.transaction.hash
