@@ -6,6 +6,8 @@ import {
   AddAuthorization,
   RemoveAuthorization,
 } from '../../../../generated/DebtAuctionHouse/DebtAuctionHouse'
+import { UserProxy, User } from '../../../../generated/schema'
+
 import { EnglishAuctionConfiguration, EnglishAuctionBid, EnglishAuction } from '../../../entities'
 import { dataSource, log, BigInt } from '@graphprotocol/graph-ts'
 
@@ -16,6 +18,7 @@ import * as enums from '../../../utils/enums'
 import { getOrCreateEnglishAuctionConfiguration } from '../../../entities/auctions'
 import { addAuthorization, removeAuthorization } from '../governance/authorizations'
 import { getOrCreateAccountingEngine } from '../../../entities/accounting-engine'
+import { findProxy } from '../proxy/proxy-factory'
 
 export function handleModifyParameters(event: ModifyParameters): void {
   let what = event.params._param.toString()
@@ -43,6 +46,14 @@ export function handleDecreaseSoldAmount(event: DecreaseSoldAmount): void {
   let auction = EnglishAuction.load(auctionId(event.params._id))
   if (auction != null) {
     let bid = new EnglishAuctionBid(bidAuctionId(event.params._id, auction.numberOfBids))
+
+    let proxy = findProxy(event.params._bidder)
+    if (proxy != null) {
+      let owner = User.load(proxy.owner)
+      if (owner != null) {
+        bid.owner = owner.address
+      }
+    }
 
     bid.bidNumber = auction.numberOfBids
     bid.type = enums.EnglishBidType_DECREASE_SOLD

@@ -947,6 +947,9 @@ type EnglishAuctionBid @entity {
   " Bidder address "
   bidder: Bytes
 
+  " proxy owner (if exists) "
+  owner: Bytes
+
   " Timestamp of the block at which the liquidation started "
   createdAt: BigInt!
 
