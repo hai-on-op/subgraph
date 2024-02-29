@@ -99,18 +99,26 @@ function increaseBidSize(
 }
 
 export function handleRestartAuction(event: RestartAuction): void {
-  restartAuction(event.params._id, event.params._auctionDeadline)
+  restartAuction(event.params._id, event.params._auctionDeadline, event)
 }
 
 export function handleSettleAuction(event: SettleAuction): void {
   settleAuction(event.params._id, event)
 }
 
-function restartAuction(id: BigInt, auctionDeadline: BigInt): void {
+function restartAuction(id: BigInt, auctionDeadline: BigInt, event: RestartAuction): void {
   let auction = EnglishAuction.load(auctionId(id))
   if (auction != null) {
-    auction.auctionDeadline = auctionDeadline
-    auction.save()
+      auction.auctionDeadline = event.params._auctionDeadline
+      let timestamps = auction.auctionRestartTimestamps
+      let hashes = auction.auctionRestartHashes
+
+      timestamps.push(event.block.timestamp!)
+      hashes.push(event.transaction.hash!)
+      auction.auctionRestartTimestamps = timestamps
+      auction.auctionRestartHashes = hashes
+      auction.save()
+
   }
 }
 

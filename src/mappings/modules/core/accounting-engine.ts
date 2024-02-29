@@ -78,6 +78,8 @@ export function handleAuctionDebt(event: AuctionDebt): void {
   auction.buyAmount = auction.buyInitialAmount
   auction.startedBy = event.address
   auction.isClaimed = false
+  auction.auctionRestartTimestamps = []
+  auction.auctionRestartHashes = []
   auction.createdAt = event.block.timestamp
   auction.createdAtBlock = event.block.number
   auction.createdAtTransaction = event.transaction.hash
@@ -117,6 +119,8 @@ export function handleAuctionSurplus(event: AuctionSurplus): void {
   auction.buyAmount = auction.buyInitialAmount
   auction.startedBy = event.address
   auction.isClaimed = false
+  auction.auctionRestartTimestamps = []
+  auction.auctionRestartHashes = []
   auction.createdAt = event.block.timestamp
   auction.createdAtBlock = event.block.number
   auction.createdAtTransaction = event.transaction.hash
