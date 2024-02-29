@@ -1030,6 +1030,12 @@ type EnglishAuction @entity {
   " Deadline for the auction after which no more bids can be placed  "
   auctionDeadline: BigInt!
 
+  " If auction was restarted, store timestamp of restart "
+  auctionRestartTimestamps: [BigInt!]!
+
+  " Auction Restarts Hash "
+  auctionRestartHashes: [Bytes!]!
+
   " List of individual bids "
   englishAuctionBids: [EnglishAuctionBid!] @derivedFrom(field: "auction")
 

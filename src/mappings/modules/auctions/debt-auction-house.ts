@@ -79,8 +79,16 @@ export function handleDecreaseSoldAmount(event: DecreaseSoldAmount): void {
 export function handleRestartAuction(event: RestartAuction): void {
   let auction = EnglishAuction.load(auctionId(event.params._id))
   if (auction != null) {
-    auction.auctionDeadline = event.params._auctionDeadline
-    auction.save()
+      auction.auctionDeadline = event.params._auctionDeadline
+      let timestamps = auction.auctionRestartTimestamps
+      let hashes = auction.auctionRestartHashes
+
+      timestamps.push(event.block.timestamp!)
+      hashes.push(event.transaction.hash!)
+      auction.auctionRestartTimestamps = timestamps
+      auction.auctionRestartHashes = hashes
+      auction.save()
+
   }
 }
 
