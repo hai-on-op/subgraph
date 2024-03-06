@@ -30,6 +30,8 @@ dataSources:
           file: ./abis/UniswapV3Pool.json
         - name: EACAggregatorProxy
           file: ./abis/EACAggregatorProxy.json
+        - name: OracleRelayer
+          file: ./abis/OracleRelayer.json
       eventHandlers:
         - event: InitializeCollateralType(bytes32)
           handler: handleInitializeCollateralType

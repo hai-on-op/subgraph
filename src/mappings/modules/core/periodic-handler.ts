@@ -1,9 +1,10 @@
 import { ethereum } from '@graphprotocol/graph-ts'
 import { DailyStat, getSystemState, HourlyStat } from '../../../entities'
 import { EACAggregatorProxy } from '../../../../generated/SAFEEngine/EACAggregatorProxy'
+import { OracleRelayer } from '../../../../generated/SAFEEngine/OracleRelayer'
+
 import * as integer from '../../../utils/integer'
 import * as decimal from '../../../utils/decimal'
-import { getUniEthPrice } from '../uniswap/uniswapv3'
 
 import { addressMap } from '../../../utils/addresses'
 
@@ -37,6 +38,15 @@ export function periodicHandler(event: ethereum.Event): void {
     .toBigDecimal()
     .div(decimal.fromNumber(CHAINLINK_ETHUSD_PRECISION))
 
+  let marketPrice = OracleRelayer.bind(addressMap.get('GEB_ORACLE_RELAYER'))
+    .try_marketPrice()
+  let haiUsdPrice: decimal.BigDecimal
+  if (marketPrice.reverted) {
+    haiUsdPrice = decimal.ZERO
+  } else {
+    haiUsdPrice = decimal.fromWad(marketPrice.value)
+  }
+
   if (daily == null) {
     // Daily record
     daily = new DailyStat(dailyId)
@@ -44,14 +54,10 @@ export function periodicHandler(event: ethereum.Event): void {
     daily.blockNumber = event.block.number
     daily.redemptionRate = state.currentRedemptionRate
     daily.redemptionPrice = state.currentRedemptionPrice
-    let haiEthPrice = getUniEthPrice(event)
-    if (haiEthPrice == decimal.ZERO) {
-      daily.marketPriceEth = decimal.ZERO
-      daily.marketPriceUsd = decimal.ZERO
-    } else {
-      daily.marketPriceEth = haiEthPrice
-      daily.marketPriceUsd = ethPrice.times(haiEthPrice)
-    }
+
+    daily.marketPriceEth = haiUsdPrice.div(ethPrice)
+    daily.marketPriceUsd = haiUsdPrice
+
     daily.globalDebt = state.globalDebt
     daily.erc20CoinTotalSupply = state.erc20CoinTotalSupply
     daily.save()
@@ -62,14 +68,10 @@ export function periodicHandler(event: ethereum.Event): void {
     hourly.blockNumber = event.block.number
     hourly.redemptionRate = state.currentRedemptionRate
     hourly.redemptionPrice = state.currentRedemptionPrice
-    let haiEthPrice = getUniEthPrice(event)
-    if (haiEthPrice == decimal.ZERO) {
-      hourly.marketPriceEth = decimal.ZERO
-      hourly.marketPriceUsd = decimal.ZERO
-    } else {
-      hourly.marketPriceEth = haiEthPrice
-      hourly.marketPriceUsd = ethPrice.times(haiEthPrice)
-    }
+
+    hourly.marketPriceEth = haiUsdPrice.div(ethPrice)
+    hourly.marketPriceUsd = haiUsdPrice
+
     hourly.globalDebt = state.globalDebt
     hourly.erc20CoinTotalSupply = state.erc20CoinTotalSupply
     hourly.save()
