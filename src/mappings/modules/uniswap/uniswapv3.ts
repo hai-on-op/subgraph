@@ -52,13 +52,13 @@ export function getUniEthPrice(event: ethereum.Event): decimal.BigDecimal {
 
   let exp = integer.fromNumber(2)
 
-  let expPow = exp.pow(96)
+  let expPow = new decimal.BigDecimal(exp.pow(96))
 
-  let sqrtPrice = uniPair.sqrtPriceX96
+  let sqrtPrice = new decimal.BigDecimal(uniPair.sqrtPriceX96)
 
-  let token0Price = (sqrtPrice.div(expPow)).pow(2)
+  let token0Price = (sqrtPrice.div(expPow)).times(sqrtPrice.div(expPow))
 
-  let token1Price = (decimal.ONE.div(token0Price.toBigDecimal()))
+  // let token1Price = (decimal.ONE.div(token0Price.toBigDecimal()))
 
-  return token1Price
+  return token0Price
 }
