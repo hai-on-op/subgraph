@@ -746,6 +746,35 @@ dataSources:
         # - event: TerminateAuctionPrematurely(uint256,address,address,uint256,uint256)  
         #   handler: handleTerminateAuctionPrematurely
  
+  - kind: ethereum
+    name: RewardDistributor
+    network: {{NETWORK}}
+    source:
+      address: '{{REWARD_DISTRIBUTOR}}'
+      abi: RewardDistributor
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/rewards/reward-distributor.ts
+      entities:
+        - MerkleRootsUpdated
+        - OwnershipTransferred
+        - RewardSetterUpdated
+        - RewardsClaimed
+      abis:
+        - name: RewardDistributor
+          file: ./abis/RewardDistributor.json
+      eventHandlers:
+        - event: MerkleRootsUpdated(address[],bytes32[])
+          handler: handleMerkleRootsUpdated
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: RewardSetterUpdated(indexed address,indexed address)
+          handler: handleRewardSetterUpdated
+        - event: RewardsClaimed(indexed address,indexed address,uint256)
+          handler: handleRewardsClaimed
   # - name: StakedTokenAuctionHouse
   #   kind: ethereum/contract
   #   network: {{NETWORK}}
