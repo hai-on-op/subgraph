@@ -775,6 +775,39 @@ dataSources:
           handler: handleRewardSetterUpdated
         - event: RewardsClaimed(indexed address,indexed address,uint256)
           handler: handleRewardsClaimed
+  - kind: ethereum/contract
+    name: StakingManager
+    network: {{NETWORK}}
+    source:
+      address: '{{STAKING_MANAGER}}'
+      abi: StakingManager
+      startBlock: {{STAKING_MANAGER_START_BLOCK}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/staking/staking-manager.ts
+      entities:
+        - StakingUser
+        - StakingPosition
+        - PendingWithdrawal
+        - RewardClaim
+        - StakingStatistic
+      abis:
+        - name: StakingManager
+          file: ./abis/StakingManager.json
+      eventHandlers:
+      - event: StakingManagerStaked(indexed address,uint256)
+        handler: handleStakingManagerStaked
+      - event: StakingManagerWithdrawalInitiated(indexed address,uint256)
+        handler: handleStakingManagerWithdrawalInitiated
+      - event: StakingManagerWithdrawalCancelled(indexed address,uint256)
+        handler: handleStakingManagerWithdrawalCancelled
+      - event: StakingManagerWithdrawn(indexed address,uint256)
+        handler: handleStakingManagerWithdrawn
+      - event: StakingManagerRewardPaid(indexed address,indexed address,uint256,indexed address)
+        handler: handleStakingManagerRewardPaid
+
   # - name: StakedTokenAuctionHouse
   #   kind: ethereum/contract
   #   network: {{NETWORK}}
@@ -875,28 +908,3 @@ templates:
         # - event: TerminateAuctionPrematurely(uint256,address,uint256)
         #   handler: handleTerminateAuctionPrematurely
 
-  # - name: StakingRewards
-  #   kind: ethereum/contract
-  #   network: {{NETWORK}}
-  #   source:
-  #     abi: StakingRewards
-  #   mapping:
-  #     kind: ethereum/events
-  #     apiVersion: 0.0.5
-  #     language: wasm/assemblyscript
-  #     file: ./src/mappings/modules/incentive/incentive.ts
-  #     entities:
-  #       - IncentiveBalance
-  #       - IncentiveCampaign
-  #     abis:
-  #       - name: StakingRewards
-  #         file: ./abis/StakingRewards.json
-  #     eventHandlers:
-  #       - event: RewardAdded(uint256)
-  #         handler: handleRewardAdded
-  #       - event: RewardPaid(indexed address,uint256)
-  #         handler: handleRewardPaid
-  #       - event: Staked(indexed address,uint256)
-  #         handler: handleStaked
-  #       - event: Withdrawn(indexed address,uint256)
-  #         handler: handleWithdrawn
