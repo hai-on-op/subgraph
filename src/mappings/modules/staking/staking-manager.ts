@@ -37,15 +37,29 @@ export function handleStakingManagerStaked(event: StakingManagerStaked): void {
   
   export function handleStakingManagerWithdrawalInitiated(event: StakingManagerWithdrawalInitiated): void {
     let user = getOrCreateUser(event.params._account)
-    let pendingWithdrawal = new PendingWithdrawal(event.params._account.toHexString())
     let position = new StakingPosition(
       event.params._account.toHexString() + event.block.timestamp.toString()
     )
     
-    pendingWithdrawal.user = user.id
-    pendingWithdrawal.amount = event.params._wad
-    pendingWithdrawal.timestamp = event.block.timestamp
-    pendingWithdrawal.status = "PENDING"
+    // Check if there's an existing pending withdrawal
+    let existingPendingWithdrawalId = user.pendingWithdrawal
+    let pendingWithdrawal: PendingWithdrawal
+    
+    if (existingPendingWithdrawalId) {
+      // Load existing pending withdrawal
+      pendingWithdrawal = PendingWithdrawal.load(existingPendingWithdrawalId) as PendingWithdrawal
+      // Update amount and timestamp
+      pendingWithdrawal.amount = pendingWithdrawal.amount.plus(event.params._wad)
+      pendingWithdrawal.timestamp = event.block.timestamp
+    } else {
+      // Create new pending withdrawal
+      pendingWithdrawal = new PendingWithdrawal(event.params._account.toHexString())
+      pendingWithdrawal.user = user.id
+      pendingWithdrawal.amount = event.params._wad
+      pendingWithdrawal.timestamp = event.block.timestamp
+      pendingWithdrawal.status = "PENDING"
+      user.pendingWithdrawal = pendingWithdrawal.id
+    }
     
     position.user = user.id
     position.amount = event.params._wad
@@ -53,7 +67,6 @@ export function handleStakingManagerStaked(event: StakingManagerStaked): void {
     position.type = "INITIATE_WITHDRAWAL"
     position.transactionHash = event.transaction.hash.toHexString()
     
-    user.pendingWithdrawal = pendingWithdrawal.id
     user.stakedBalance = user.stakedBalance.minus(event.params._wad)
     
     user.save()
