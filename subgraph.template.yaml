@@ -775,6 +775,33 @@ dataSources:
           handler: handleRewardSetterUpdated
         - event: RewardsClaimed(indexed address,indexed address,uint256)
           handler: handleRewardsClaimed
+ 
+  - kind: ethereum
+    name: WrappedToken
+    network: {{NETWORK}}
+    source:
+      address: '{{HAIVELO}}'
+      abi: WrappedToken
+      startBlock: 19200000  # You can adjust this to when the contract was deployed
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/token/wrapped-token.ts
+      entities:
+        - WrappedToken
+        - WrappedTokenDeposit
+        - WrappedTokenUserBalance
+        - User
+      abis:
+        - name: WrappedToken
+          file: ./abis/WrappedToken.json
+      eventHandlers:
+        - event: WrappedTokenDeposit(indexed address,uint256)
+          handler: handleWrappedTokenDeposit
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+ 
   # - name: StakedTokenAuctionHouse
   #   kind: ethereum/contract
   #   network: {{NETWORK}}
@@ -900,3 +927,4 @@ templates:
   #         handler: handleStaked
   #       - event: Withdrawn(indexed address,uint256)
   #         handler: handleWithdrawn
+
