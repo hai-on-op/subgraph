@@ -8,7 +8,7 @@ dataSources:
     kind: ethereum/contract
     network: {{NETWORK}}
     source:
-      address: '{{GEB_SAFE_ENGINE}}'
+      address: "{{GEB_SAFE_ENGINE}}"
       abi: SAFEEngine
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
@@ -59,12 +59,12 @@ dataSources:
           handler: handleAddAuthorization
         - event: RemoveAuthorization(address)
           handler: handleRemoveAuthorization
-  
+
   - name: GebSafeManager
     kind: ethereum/contract
     network: {{NETWORK}}
     source:
-      address: '{{SAFE_MANAGER}}'
+      address: "{{SAFE_MANAGER}}"
       abi: GebSafeManager
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
@@ -94,7 +94,7 @@ dataSources:
     kind: ethereum/contract
     network: {{NETWORK}}
     source:
-      address: '{{GEB_ORACLE_RELAYER}}'
+      address: "{{GEB_ORACLE_RELAYER}}"
       abi: OracleRelayer
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
@@ -125,12 +125,12 @@ dataSources:
           handler: handleRemoveAuthorization
         - event: InitializeCollateralType(bytes32)
           handler: handleInitializeCollateralType
-  
+
   - name: TaxCollector
     kind: ethereum/contract
     network: {{NETWORK}}
     source:
-      address: '{{GEB_TAX_COLLECTOR}}'
+      address: "{{GEB_TAX_COLLECTOR}}"
       abi: TaxCollector
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
@@ -155,8 +155,7 @@ dataSources:
           handler: handleRemoveAuthorization
         - event: InitializeCollateralType(bytes32)
           handler: handleInitializeCollateralType
-        
-        
+
         # Remaining events
         # - event: AddSecondaryReceiver(bytes32,uint256,uint256,uint256,uint256)
         #   handle: handleAddSecondaryReceiver
@@ -172,12 +171,12 @@ dataSources:
         #   handle: handleModifyParameters
         # - event: ModifySecondaryReceiver(bytes32,uint256,uint256,uint256,uint256)
         #   handle: handleModifySecondaryReceiver
-  
+
   - name: LiquidationEngine
     kind: ethereum/contract
     network: {{NETWORK}}
     source:
-      address: '{{GEB_LIQUIDATION_ENGINE}}'
+      address: "{{GEB_LIQUIDATION_ENGINE}}"
       abi: LiquidationEngine
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
@@ -220,12 +219,12 @@ dataSources:
         #   handler: handleSaveSAFE
         # - event: FailedSAFESave(bytes)
         #   handler: handleFailedSAFESave
-  
+
   - name: AccountingEngine
     kind: ethereum/contract
     network: {{NETWORK}}
     source:
-      address: '{{GEB_ACCOUNTING_ENGINE}}'
+      address: "{{GEB_ACCOUNTING_ENGINE}}"
       abi: AccountingEngine
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
@@ -236,7 +235,7 @@ dataSources:
       entities:
         - SystemState
         - EnglishAuctionConfiguration
-        - AccountingEngine 
+        - AccountingEngine
         - EnglishAuction
       abis:
         - name: AccountingEngine
@@ -245,7 +244,7 @@ dataSources:
           file: ./abis/DebtAuctionHouse.json
         - name: SurplusAuctionHouse
           file: ./abis/BurningSurplusAuctionHouse.json
-        
+
       eventHandlers:
         - event: ModifyParameters(indexed bytes32,indexed bytes32,bytes)
           handler: handleModifyParameters
@@ -277,7 +276,7 @@ dataSources:
     network: {{NETWORK}}
     source:
       abi: HaiProxyFactory
-      address: '{{PROXY_FACTORY}}'
+      address: "{{PROXY_FACTORY}}"
       startBlock: {{STARTING_BLOCK_NUMBER}}
       # Use this instead of the above for dev (faster sync but not all proxies available)
       # startBlock: {{STARTING_BLOCK_NUMBER}}
@@ -300,7 +299,7 @@ dataSources:
     network: {{NETWORK}}
     source:
       abi: CoinJoin
-      address: '{{GEB_COIN_JOIN}}'
+      address: "{{GEB_COIN_JOIN}}"
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
@@ -324,7 +323,7 @@ dataSources:
 
         # - event: DisableContract()
         #   handler: handleDisableContract
-  
+
   # - name: EthAJoin
   #   kind: ethereum/contract
   #   network: {{NETWORK}}
@@ -352,15 +351,15 @@ dataSources:
   #       - event: RemoveAuthorization(address)
   #         handler: handleRemoveAuthorization
 
-        # - event: DisableContract()
-        #   handler: handleDisableContract
+  # - event: DisableContract()
+  #   handler: handleDisableContract
 
   - name: Coin
     kind: ethereum/contract
     network: {{NETWORK}}
     source:
       abi: Coin
-      address: '{{GEB_COIN}}'
+      address: "{{GEB_COIN}}"
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
@@ -378,14 +377,14 @@ dataSources:
           file: ./abis/ERC20.json
       eventHandlers:
         - event: Transfer(indexed address,indexed address,uint256)
-          handler: handleTransfer 
+          handler: handleTransfer
         - event: Approval(indexed address,indexed address,uint256)
-          handler: handleApproval 
+          handler: handleApproval
         - event: AddAuthorization(address)
           handler: handleAddAuthorization
         - event: RemoveAuthorization(address)
           handler: handleRemoveAuthorization
-  
+
   # - name: ProtestPause
   #   kind: ethereum/contract
   #   network: {{NETWORK}}
@@ -413,20 +412,20 @@ dataSources:
   #         handler: handleExecuteTransaction
   #       - event: AbandonTransaction(address,address,bytes32,bytes,uint256)
   #         handler: handleAbandonTransaction
-        # - event: ChangeDelayMultiplier(uint256)
-        #   handler: handleChangeDelayMultiplier
-        # - event: LogNote(indexed bytes4,indexed address,indexed bytes32,indexed bytes32,uint256,bytes)
-        #   handler: handleLogNote
-        # - event: LogSetAuthority(indexed address)
-        #   handler: handleLogSetAuthority
-        # - event: LogSetOwner(indexed address)
-        #   handler: handleLogSetOwner
-        # - event: ProtestAgainstTransaction(address,address,bytes32,bytes,uint256)
-        #   handler: handleProtestAgainstTransaction
-        # - event: SetDelay(uint256)
-        #   handler: handleSetDelay
-        # - event: SetProtester(address)
-        #   handler: handleSetProtester
+  # - event: ChangeDelayMultiplier(uint256)
+  #   handler: handleChangeDelayMultiplier
+  # - event: LogNote(indexed bytes4,indexed address,indexed bytes32,indexed bytes32,uint256,bytes)
+  #   handler: handleLogNote
+  # - event: LogSetAuthority(indexed address)
+  #   handler: handleLogSetAuthority
+  # - event: LogSetOwner(indexed address)
+  #   handler: handleLogSetOwner
+  # - event: ProtestAgainstTransaction(address,address,bytes32,bytes,uint256)
+  #   handler: handleProtestAgainstTransaction
+  # - event: SetDelay(uint256)
+  #   handler: handleSetDelay
+  # - event: SetProtester(address)
+  #   handler: handleSetProtester
 
   # - name: EthOsm
   #   kind: ethereum/contract
@@ -453,17 +452,17 @@ dataSources:
   #       - event: RemoveAuthorization(address)
   #         handler: handleRemoveAuthorization
 
-        # - event: ChangeDelay(uint16)
-        #   handler: handleChangeDelay
-        # - event: ChangePriceSource(address)
-        #   handler: handleChangePriceSource
-        # - event: RestartValue()
-        #   handler: handleRestartValue
-        # - event: Start()
-        #   handler: handleStart
-        # - event: Stop()
-        #   handler: handleStop
-  
+  # - event: ChangeDelay(uint16)
+  #   handler: handleChangeDelay
+  # - event: ChangePriceSource(address)
+  #   handler: handleChangePriceSource
+  # - event: RestartValue()
+  #   handler: handleRestartValue
+  # - event: Start()
+  #   handler: handleStart
+  # - event: Stop()
+  #   handler: handleStop
+
   # - name: CoinTwap
   #   kind: ethereum/contract
   #   network: {{NETWORK}}
@@ -493,19 +492,19 @@ dataSources:
   #       - event: RemoveAuthorization(address)
   #         handler: handleRemoveAuthorization
 
-        # - event:  FailRewardCaller(bytes,address,uint256)
-        #   handler: handleFailRewardCaller
-        # - event:  ModifyParameters(bytes32,uint256)
-        #   handler: handleModifyParameters
-        # - event:  RewardCaller(address,uint256)
-        #   handler: handleRewardCaller
+  # - event:  FailRewardCaller(bytes,address,uint256)
+  #   handler: handleFailRewardCaller
+  # - event:  ModifyParameters(bytes32,uint256)
+  #   handler: handleModifyParameters
+  # - event:  RewardCaller(address,uint256)
+  #   handler: handleRewardCaller
 
   - name: GlobalSettlement
     kind: ethereum/contract
     network: {{NETWORK}}
     source:
       abi: GlobalSettlement
-      address: '{{GEB_GLOBAL_SETTLEMENT}}'
+      address: "{{GEB_GLOBAL_SETTLEMENT}}"
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
@@ -528,7 +527,7 @@ dataSources:
     network: {{NETWORK}}
     source:
       abi: StabilityFeeTreasury
-      address: '{{GEB_STABILITY_FEE_TREASURY}}'
+      address: "{{GEB_STABILITY_FEE_TREASURY}}"
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
@@ -568,12 +567,12 @@ dataSources:
   #         handler: handleAddAuthorization
   #       - event: RemoveAuthorization(indexed address)
   #         handler: handleRemoveAuthorization
-        # - event: SetOwner(indexed address)
-        #   handler: handleSetOwner
-        # - event: SetRoot(indexed address)
-        #   handler: handleSetRoot
+  # - event: SetOwner(indexed address)
+  #   handler: handleSetOwner
+  # - event: SetRoot(indexed address)
+  #   handler: handleSetRoot
 
-  # - name: ProtToken 
+  # - name: ProtToken
   #   kind: ethereum/contract
   #   network: {{NETWORK}}
   #   source:
@@ -602,12 +601,12 @@ dataSources:
   #       - event: Burn(indexed address,uint256)
   #         handler: handleBurn
 
-  - name: UniCoinPool 
+  - name: UniCoinPool
     kind: ethereum/contract
     network: {{NETWORK}}
     source:
       abi: UniswapV3Pool
-      address: '{{GEB_COIN_UNISWAP_POOL}}'
+      address: "{{GEB_COIN_UNISWAP_POOL}}"
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
@@ -628,8 +627,8 @@ dataSources:
         #   handler: handleMint
         # - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
         #   handler: handleBurn
-  
-  # - name: UniCoinPool 
+
+  # - name: UniCoinPool
   #   kind: ethereum/contract
   #   network: {{NETWORK}}
   #   source:
@@ -657,17 +656,17 @@ dataSources:
   #         handler: handleTransfer
   #       - event: Approval(indexed address,indexed address,uint256)
   #         handler: handleApproval
-        # - event: Mint(indexed address,uint256,uint256)
-        #   handler: handleMint
-        # - event: Burn(indexed address,uint256,uint256,indexed address)
-        #   handler: handleBurn
+  # - event: Mint(indexed address,uint256,uint256)
+  #   handler: handleMint
+  # - event: Burn(indexed address,uint256,uint256,indexed address)
+  #   handler: handleBurn
 
   - name: SurplusAuctionHouse
     kind: ethereum/contract
     network: {{NETWORK}}
     source:
       abi: SurplusAuctionHouse
-      address: '{{GEB_SURPLUS_AUCTION_HOUSE}}'
+      address: "{{GEB_SURPLUS_AUCTION_HOUSE}}"
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
@@ -707,7 +706,7 @@ dataSources:
     network: {{NETWORK}}
     source:
       abi: DebtAuctionHouse
-      address: '{{GEB_DEBT_AUCTION_HOUSE}}'
+      address: "{{GEB_DEBT_AUCTION_HOUSE}}"
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
@@ -743,14 +742,14 @@ dataSources:
         #   handler: handleDisableContract
         # - event: StartAuction(uint256,uint256,uint256,uint256,indexed address,uint256,uint256)
         #   handler: handleStartAuction
-        # - event: TerminateAuctionPrematurely(uint256,address,address,uint256,uint256)  
+        # - event: TerminateAuctionPrematurely(uint256,address,address,uint256,uint256)
         #   handler: handleTerminateAuctionPrematurely
- 
+
   - kind: ethereum
     name: RewardDistributor
     network: {{NETWORK}}
     source:
-      address: '{{REWARD_DISTRIBUTOR}}'
+      address: "{{REWARD_DISTRIBUTOR}}"
       abi: RewardDistributor
       startBlock: 0
     mapping:
@@ -775,11 +774,12 @@ dataSources:
           handler: handleRewardSetterUpdated
         - event: RewardsClaimed(indexed address,indexed address,uint256)
           handler: handleRewardsClaimed
+
   - kind: ethereum/contract
     name: StakingManager
     network: {{NETWORK}}
     source:
-      address: '{{STAKING_MANAGER}}'
+      address: "{{STAKING_MANAGER}}"
       abi: StakingManager
       startBlock: {{STAKING_MANAGER_START_BLOCK}}
     mapping:
@@ -797,16 +797,42 @@ dataSources:
         - name: StakingManager
           file: ./abis/StakingManager.json
       eventHandlers:
-      - event: StakingManagerStaked(indexed address,uint256)
-        handler: handleStakingManagerStaked
-      - event: StakingManagerWithdrawalInitiated(indexed address,uint256)
-        handler: handleStakingManagerWithdrawalInitiated
-      - event: StakingManagerWithdrawalCancelled(indexed address,uint256)
-        handler: handleStakingManagerWithdrawalCancelled
-      - event: StakingManagerWithdrawn(indexed address,uint256)
-        handler: handleStakingManagerWithdrawn
-      - event: StakingManagerRewardPaid(indexed address,indexed address,uint256,indexed address)
-        handler: handleStakingManagerRewardPaid
+        - event: StakingManagerStaked(indexed address,uint256)
+          handler: handleStakingManagerStaked
+        - event: StakingManagerWithdrawalInitiated(indexed address,uint256)
+          handler: handleStakingManagerWithdrawalInitiated
+        - event: StakingManagerWithdrawalCancelled(indexed address,uint256)
+          handler: handleStakingManagerWithdrawalCancelled
+        - event: StakingManagerWithdrawn(indexed address,uint256)
+          handler: handleStakingManagerWithdrawn
+        - event: StakingManagerRewardPaid(indexed address,indexed address,uint256,indexed address)
+          handler: handleStakingManagerRewardPaid
+
+  - kind: ethereum
+    name: WrappedToken
+    network: {{NETWORK}}
+    source:
+      address: "{{HAIVELO}}"
+      abi: WrappedToken
+      startBlock: 19200000 # You can adjust this to when the contract was deployed
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/token/wrapped-token.ts
+      entities:
+        - WrappedToken
+        - WrappedTokenDeposit
+        - WrappedTokenUserBalance
+        - User
+      abis:
+        - name: WrappedToken
+          file: ./abis/WrappedToken.json
+      eventHandlers:
+        - event: WrappedTokenDeposit(indexed address,uint256)
+          handler: handleWrappedTokenDeposit
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
 
   # - name: StakedTokenAuctionHouse
   #   kind: ethereum/contract
@@ -842,8 +868,7 @@ dataSources:
   #       - event: RemoveAuthorization(address)
   #         handler: handleRemoveAuthorization
 
-
-  # - name: StakingRewardsFactory 
+  # - name: StakingRewardsFactory
   #   kind: ethereum/contract
   #   network: {{NETWORK}}
   #   source:
@@ -868,12 +893,11 @@ dataSources:
   #         handler: handleAddAuthorization
   #       - event: RemoveAuthorization(address)
   #         handler: handleRemoveAuthorization
-        # - event: ModifyParameters(indexed uint256,bytes32,uint256)
-        #   handler: handleModifyParameters
-        # - event: NotifyRewardAmount(indexed uint256,uint256)
-        #   handler: handleNotifyRewardAmount
+  # - event: ModifyParameters(indexed uint256,bytes32,uint256)
+  #   handler: handleModifyParameters
+  # - event: NotifyRewardAmount(indexed uint256,uint256)
+  #   handler: handleNotifyRewardAmount
 templates:
-  
   - name: FixedDiscountCollateralAuctionHouse
     kind: ethereum/contract
     network: {{NETWORK}}
@@ -908,3 +932,28 @@ templates:
         # - event: TerminateAuctionPrematurely(uint256,address,uint256)
         #   handler: handleTerminateAuctionPrematurely
 
+  # - name: StakingRewards
+  #   kind: ethereum/contract
+  #   network: {{NETWORK}}
+  #   source:
+  #     abi: StakingRewards
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.5
+  #     language: wasm/assemblyscript
+  #     file: ./src/mappings/modules/incentive/incentive.ts
+  #     entities:
+  #       - IncentiveBalance
+  #       - IncentiveCampaign
+  #     abis:
+  #       - name: StakingRewards
+  #         file: ./abis/StakingRewards.json
+  #     eventHandlers:
+  #       - event: RewardAdded(uint256)
+  #         handler: handleRewardAdded
+  #       - event: RewardPaid(indexed address,uint256)
+  #         handler: handleRewardPaid
+  #       - event: Staked(indexed address,uint256)
+  #         handler: handleStaked
+  #       - event: Withdrawn(indexed address,uint256)
+  #         handler: handleWithdrawn
