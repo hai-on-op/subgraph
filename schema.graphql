@@ -1667,3 +1667,171 @@ type TokenClaim @entity {
   " Number of times this token has been claimed "
   claimCount: BigInt!
 }
+
+type StakingUser @entity {
+  id: ID! # user address
+  stakedBalance: BigInt!
+  totalStaked: BigInt!
+  totalWithdrawn: BigInt!
+  stakingPositions: [StakingPosition!]! @derivedFrom(field: "user")
+  rewards: [RewardClaim!]! @derivedFrom(field: "user")
+  pendingWithdrawal: PendingWithdrawal
+}
+
+type StakingPosition @entity {
+  id: ID! # user address + timestamp
+  user: StakingUser!
+  amount: BigInt!
+  timestamp: BigInt!
+  type: StakingActionType!
+  transactionHash: String!
+}
+
+enum StakingActionType {
+  STAKE
+  INITIATE_WITHDRAWAL
+  CANCEL_WITHDRAWAL
+  WITHDRAW
+}
+
+type PendingWithdrawal @entity {
+  id: ID! # user address
+  user: StakingUser!
+  amount: BigInt!
+  timestamp: BigInt!
+  status: WithdrawalStatus!
+}
+
+enum WithdrawalStatus {
+  PENDING
+  CANCELLED
+  COMPLETED
+}
+
+
+# Staking Rewards
+type RewardClaim @entity {
+  id: ID! # user address + timestamp
+  user: StakingUser!
+  rewardToken: Bytes! # address of reward token
+  amount: BigInt!
+  destination: Bytes! # address where rewards were sent
+  timestamp: BigInt!
+  transactionHash: String!
+}
+
+type StakingStatistic @entity {
+  id: ID! # "singleton"
+  totalStaked: BigInt!
+  totalStakers: BigInt!
+  totalRewardsPaid: BigInt!
+}
+# --- Wrapped Token (HAI Velo) ---
+
+type WrappedToken @entity {
+  " Contract address "
+  id: ID!
+  
+  " Name of the wrapped token "
+  name: String!
+  
+  " Symbol of the wrapped token "
+  symbol: String!
+  
+  " Address of the base token "
+  baseToken: Bytes!
+  
+  " Address of the base token manager "
+  baseTokenManager: Bytes!
+  
+  " Total amount deposited across all users "
+  totalDeposits: BigDecimal!
+  
+  " Number of unique depositors "
+  depositorCount: BigInt!
+  
+  " List of all deposits made "
+  deposits: [WrappedTokenDeposit!]! @derivedFrom(field: "wrappedToken")
+  
+  " List of all user balances "
+  userBalances: [WrappedTokenUserBalance!]! @derivedFrom(field: "wrappedToken")
+  
+  " Timestamp of the first deposit "
+  createdAt: BigInt!
+  
+  " Block number of the first deposit "
+  createdAtBlock: BigInt!
+  
+  " Hash of the transaction of the first deposit "
+  createdAtTransaction: Bytes!
+  
+  " Timestamp of the last deposit "
+  modifiedAt: BigInt
+  
+  " Block number of the last deposit "
+  modifiedAtBlock: BigInt
+  
+  " Hash of the transaction of the last deposit "
+  modifiedAtTransaction: Bytes
+}
+
+type WrappedTokenDeposit @entity {
+  " Equal to: <TX hash>-<Log index> "
+  id: ID!
+  
+  " User who deposited "
+  user: User!
+  
+  " Amount deposited "
+  amount: BigDecimal!
+  
+  " The wrapped token contract "
+  wrappedToken: WrappedToken!
+  
+  " Timestamp of the deposit [seconds] "
+  createdAt: BigInt!
+  
+  " Block number of the deposit "
+  createdAtBlock: BigInt!
+  
+  " Hash of the transaction "
+  createdAtTransaction: Bytes!
+}
+
+type WrappedTokenUserBalance @entity {
+  " Equal to: <User Address>-<WrappedToken Address> "
+  id: ID!
+  
+  " User who owns the balance "
+  user: User!
+  
+  " The wrapped token contract "
+  wrappedToken: WrappedToken!
+  
+  " Current balance "
+  balance: BigDecimal!
+  
+  " Total amount deposited by this user "
+  totalDeposited: BigDecimal!
+  
+  " Number of deposits made by this user "
+  depositCount: BigInt!
+  
+  " Timestamp of the first deposit "
+  createdAt: BigInt!
+  
+  " Block number of the first deposit "
+  createdAtBlock: BigInt!
+  
+  " Hash of the transaction of the first deposit "
+  createdAtTransaction: Bytes!
+  
+  " Timestamp of the last deposit "
+  modifiedAt: BigInt
+  
+  " Block number of the last deposit "
+  modifiedAtBlock: BigInt
+  
+  " Hash of the transaction of the last deposit "
+  modifiedAtTransaction: Bytes
+}
