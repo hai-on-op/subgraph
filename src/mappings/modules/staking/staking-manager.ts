@@ -72,6 +72,9 @@ export function handleStakingManagerStaked(event: StakingManagerStaked): void {
     user.save()
     pendingWithdrawal.save()
     position.save()
+
+    updateStakingStatistics(event.params._wad, false)
+
   }
   
   // New handlers for the remaining events
@@ -98,6 +101,9 @@ export function handleStakingManagerStaked(event: StakingManagerStaked): void {
     
     user.save()
     position.save()
+
+    updateStakingStatistics(event.params._wad, true)
+
   }
   
   export function handleStakingManagerWithdrawn(event: StakingManagerWithdrawn): void {
@@ -123,7 +129,7 @@ export function handleStakingManagerStaked(event: StakingManagerStaked): void {
     
     user.save()
     position.save()
-    updateStakingStatistics(event.params._wad, false)
+    //updateStakingStatistics(event.params._wad, false)
   }
   
   export function handleStakingManagerRewardPaid(event: StakingManagerRewardPaid): void {
