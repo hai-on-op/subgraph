@@ -766,13 +766,9 @@ dataSources:
         - name: RewardDistributor
           file: ./abis/RewardDistributor.json
       eventHandlers:
-        - event: MerkleRootsUpdated(address[],bytes32[])
+        - event: RewardDistributorMerkleRootUpdated(indexed address,bytes32,uint256)
           handler: handleMerkleRootsUpdated
-        - event: OwnershipTransferred(indexed address,indexed address)
-          handler: handleOwnershipTransferred
-        - event: RewardSetterUpdated(indexed address,indexed address)
-          handler: handleRewardSetterUpdated
-        - event: RewardsClaimed(indexed address,indexed address,uint256)
+        - event: RewardDistributorRewardClaimed(indexed address,indexed address,uint256)
           handler: handleRewardsClaimed
 
   - kind: ethereum/contract
