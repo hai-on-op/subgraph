@@ -1,9 +1,7 @@
 import { BigInt, Bytes } from "@graphprotocol/graph-ts";
 import {
-  MerkleRootsUpdated,
-  OwnershipTransferred,
-  RewardSetterUpdated,
-  RewardsClaimed,
+  RewardDistributorMerkleRootUpdated,
+  RewardDistributorRewardClaimed,
 } from "../../../../generated/RewardDistributor/RewardDistributor";
 import {
   RewardDistributor,
@@ -26,7 +24,6 @@ function getOrCreateRewardDistributor(address: Bytes): RewardDistributor {
   return distributor;
 }
 
-export function handleOwnershipTransferred(event: OwnershipTransferred): void {}
 
 function getOrCreateUser(address: Bytes): RewardUser {
   let user = RewardUser.load(address.toHexString());
@@ -51,62 +48,69 @@ function getOrCreateTokenClaim(user: Bytes, token: Bytes): TokenClaim {
   return tokenClaim;
 }
 
-export function handleMerkleRootsUpdated(event: MerkleRootsUpdated): void {
+export function handleMerkleRootsUpdated(event: RewardDistributorMerkleRootUpdated): void {
   const distributor = getOrCreateRewardDistributor(event.address);
 
-
   // Update merkle roots for each token
-  for (let i = 0; i < event.params.tokens.length; i++) {
-    const token = event.params.tokens[i];
-    const root = event.params.roots[i];
+    const token = event.params._rewardToken;
+    const root = event.params._merkleRoot;
 
-    const merkleRoot = new MerkleRoot(token.toHexString());
-    merkleRoot.distributor = distributor.id;
-    merkleRoot.token = token;
+    // Try to load existing merkle root
+    let merkleRoot = MerkleRoot.load(token.toHexString());
+    
+    // If it doesn't exist, create a new one
+    if (!merkleRoot) {
+      merkleRoot = new MerkleRoot(token.toHexString());
+      merkleRoot.distributor = distributor.id;
+      merkleRoot.token = token;
+    }
+
+    // Update the root and timestamps
     merkleRoot.root = root;
     merkleRoot.updatedAt = event.block.timestamp;
     merkleRoot.updatedAtBlock = event.block.number;
     merkleRoot.updatedAtTransaction = event.transaction.hash;
     merkleRoot.save();
-  }
+  
 }
 
+/*
 export function handleRewardSetterUpdated(event: RewardSetterUpdated): void {
   log.debug("Reward setter updated to {}", [event.params.newSetter.toHexString()]);
 
   const distributor = getOrCreateRewardDistributor(event.address);
   distributor.rewardSetter = event.params.newSetter;
   distributor.save();
-}
+}*/
 
-export function handleRewardsClaimed(event: RewardsClaimed): void {
+export function handleRewardsClaimed(event: RewardDistributorRewardClaimed): void {
   const distributor = getOrCreateRewardDistributor(event.address);
-  const user = getOrCreateUser(event.params.user);
+  const user = getOrCreateUser(event.params._account);
   const tokenClaim = getOrCreateTokenClaim(
-    event.params.user,
-    event.params.token
+    event.params._account,
+    event.params._rewardToken
   );
 
   // Create new claim
   const claimId =
-    event.params.user.toHexString() +
+    event.params._account.toHexString() +
     "-" +
-    event.params.token.toHexString() +
+    event.params._rewardToken.toHexString() +
     "-" +
     event.block.timestamp.toString();
 
   const claim = new Claim(claimId);
   claim.distributor = distributor.id;
   claim.user = user.id;
-  claim.token = event.params.token;
-  claim.amount = event.params.amount;
+  claim.token = event.params._rewardToken;
+  claim.amount = event.params._wad;
   claim.claimedAt = event.block.timestamp;
   claim.claimedAtBlock = event.block.number;
   claim.claimedAtTransaction = event.transaction.hash;
   claim.save();
 
   // Update token claim totals
-  tokenClaim.totalAmount = tokenClaim.totalAmount.plus(event.params.amount);
+  tokenClaim.totalAmount = tokenClaim.totalAmount.plus(event.params._wad);
   tokenClaim.claimCount = tokenClaim.claimCount.plus(BigInt.fromI32(1));
   tokenClaim.save();
 }
