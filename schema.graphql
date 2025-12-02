@@ -1726,6 +1726,99 @@ type StakingStatistic @entity {
   totalStakers: BigInt!
   totalRewardsPaid: BigInt!
 }
+
+# --- HaiBoldCurveLP Staking ---
+
+type HaiBoldCurveLPStakingUser @entity {
+  id: ID! # user address
+  stakedBalance: BigInt!
+  totalStaked: BigInt!
+  totalWithdrawn: BigInt!
+  stakingPositions: [HaiBoldCurveLPStakingPosition!]! @derivedFrom(field: "user")
+  rewards: [HaiBoldCurveLPRewardClaim!]! @derivedFrom(field: "user")
+  pendingWithdrawal: HaiBoldCurveLPPendingWithdrawal
+}
+
+type HaiBoldCurveLPStakingPosition @entity {
+  id: ID! # user address + timestamp
+  user: HaiBoldCurveLPStakingUser!
+  amount: BigInt!
+  timestamp: BigInt!
+  type: StakingActionType!
+  transactionHash: String!
+}
+
+type HaiBoldCurveLPPendingWithdrawal @entity {
+  id: ID! # user address
+  user: HaiBoldCurveLPStakingUser!
+  amount: BigInt!
+  timestamp: BigInt!
+  status: WithdrawalStatus!
+}
+
+type HaiBoldCurveLPRewardClaim @entity {
+  id: ID! # user address + timestamp
+  user: HaiBoldCurveLPStakingUser!
+  rewardToken: Bytes! # address of reward token
+  amount: BigInt!
+  destination: Bytes! # address where rewards were sent
+  timestamp: BigInt!
+  transactionHash: String!
+}
+
+type HaiBoldCurveLPStakingStatistic @entity {
+  id: ID! # "singleton"
+  totalStaked: BigInt!
+  totalStakers: BigInt!
+  totalRewardsPaid: BigInt!
+}
+
+# --- HaiVeloVeloLP Staking ---
+
+type HaiVeloVeloLPStakingUser @entity {
+  id: ID! # user address
+  stakedBalance: BigInt!
+  totalStaked: BigInt!
+  totalWithdrawn: BigInt!
+  stakingPositions: [HaiVeloVeloLPStakingPosition!]! @derivedFrom(field: "user")
+  rewards: [HaiVeloVeloLPRewardClaim!]! @derivedFrom(field: "user")
+  pendingWithdrawal: HaiVeloVeloLPPendingWithdrawal
+}
+
+type HaiVeloVeloLPStakingPosition @entity {
+  id: ID! # user address + timestamp
+  user: HaiVeloVeloLPStakingUser!
+  amount: BigInt!
+  timestamp: BigInt!
+  type: StakingActionType!
+  transactionHash: String!
+}
+
+type HaiVeloVeloLPPendingWithdrawal @entity {
+  id: ID! # user address
+  user: HaiVeloVeloLPStakingUser!
+  amount: BigInt!
+  timestamp: BigInt!
+  status: WithdrawalStatus!
+}
+
+type HaiVeloVeloLPRewardClaim @entity {
+  id: ID! # user address + timestamp
+  user: HaiVeloVeloLPStakingUser!
+  rewardToken: Bytes! # address of reward token
+  amount: BigInt!
+  destination: Bytes! # address where rewards were sent
+  timestamp: BigInt!
+  transactionHash: String!
+}
+
+type HaiVeloVeloLPStakingStatistic @entity {
+  id: ID! # "singleton"
+  totalStaked: BigInt!
+  totalStakers: BigInt!
+  totalRewardsPaid: BigInt!
+}
+
 # --- Wrapped Token (HAI Velo) ---
 
 type WrappedToken @entity {
@@ -1835,3 +1928,46 @@ type WrappedTokenUserBalance @entity {
   " Hash of the transaction of the last deposit "
   modifiedAtTransaction: Bytes
 }
+
+# --- New Staking ---
+
+# type StakingManager @entity {
+#   "Contract address"
+#   id: ID!
+#   "Protocol token address (e.g., KITE)"
+#   protocolToken: Bytes!
+#   "Staking token address (e.g., stKITE)"
+#   stakingToken: StakingToken!
+#   "Total currently staked (excluding pending withdrawals)"
+#   totalStaked: BigInt!
+#   "Total staked including pending withdrawals"
+#   totalStakedRaw: BigInt!
+#   "Available KITE rewards"
+#   totalKiteRewardsAvailable: BigInt!
+#   "Cooldown period in seconds"
+#   cooldownPeriod: BigInt!
+#   "Number of reward types"
+#   rewardTypesCount: Int!
+#   "All reward types for this manager"
+#   rewardTypes: [RewardType!]! @derivedFrom(field: "stakingManager")
+#   "All user positions for this manager"
+#   userPositions: [UserStakingPosition!]! @derivedFrom(field: "stakingManager")
+#   "All stake transactions"
+#   stakeTransactions: [StakeTransaction!]! @derivedFrom(field: "stakingManager")
+#   "All withdrawal transactions"
+#   withdrawalTransactions: [WithdrawalTransaction!]! @derivedFrom(field: "stakingManager")
+#   "All reward claim transactions"
+#   rewardClaimTransactions: [RewardClaimTransaction!]! @derivedFrom(field: "stakingManager")
+#   "All checkpoint events"
+#   checkpointEvents: [CheckpointEvent!]! @derivedFrom(field: "stakingManager")
+#   "Statistics for this manager"
+#   stats: StakingManagerStats!
+#   "Block number when created"
+#   createdAtBlock: BigInt!
+#   "Timestamp when created"
+#   createdAtTimestamp: BigInt!
+#   "Last updated block"
+#   lastUpdatedBlock: BigInt!
+#   "Last updated timestamp"
+#   lastUpdatedTimestamp: BigInt!
+# }
