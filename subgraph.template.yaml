@@ -751,7 +751,7 @@ dataSources:
     source:
       address: "{{REWARD_DISTRIBUTOR}}"
       abi: RewardDistributor
-      startBlock: 0
+      startBlock: {{REWARD_DISTRIBUTOR_START_BLOCK}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -766,13 +766,9 @@ dataSources:
         - name: RewardDistributor
           file: ./abis/RewardDistributor.json
       eventHandlers:
-        - event: MerkleRootsUpdated(address[],bytes32[])
+        - event: RewardDistributorMerkleRootUpdated(indexed address,bytes32,uint256)
           handler: handleMerkleRootsUpdated
-        - event: OwnershipTransferred(indexed address,indexed address)
-          handler: handleOwnershipTransferred
-        - event: RewardSetterUpdated(indexed address,indexed address)
-          handler: handleRewardSetterUpdated
-        - event: RewardsClaimed(indexed address,indexed address,uint256)
+        - event: RewardDistributorRewardClaimed(indexed address,indexed address,uint256)
           handler: handleRewardsClaimed
 
   - kind: ethereum/contract
@@ -793,6 +789,72 @@ dataSources:
         - PendingWithdrawal
         - RewardClaim
         - StakingStatistic
+      abis:
+        - name: StakingManager
+          file: ./abis/StakingManager.json
+      eventHandlers:
+        - event: StakingManagerStaked(indexed address,uint256)
+          handler: handleStakingManagerStaked
+        - event: StakingManagerWithdrawalInitiated(indexed address,uint256)
+          handler: handleStakingManagerWithdrawalInitiated
+        - event: StakingManagerWithdrawalCancelled(indexed address,uint256)
+          handler: handleStakingManagerWithdrawalCancelled
+        - event: StakingManagerWithdrawn(indexed address,uint256)
+          handler: handleStakingManagerWithdrawn
+        - event: StakingManagerRewardPaid(indexed address,indexed address,uint256,indexed address)
+          handler: handleStakingManagerRewardPaid
+
+  - kind: ethereum/contract
+    name: StakingManagerHaiBoldCurveLp
+    network: {{NETWORK}}
+    source:
+      address: "{{STAKING_MANAGER_HAI_BOLD_CURVE_LP}}"
+      abi: StakingManager
+      startBlock: {{STAKING_MANAGER_HAI_BOLD_CURVE_LP_START_BLOCK}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/staking/staking-manager-hai-bold-curve-lp.ts
+      entities:
+        - HaiBoldCurveLPStakingUser
+        - HaiBoldCurveLPStakingPosition
+        - HaiBoldCurveLPPendingWithdrawal
+        - HaiBoldCurveLPRewardClaim
+        - HaiBoldCurveLPStakingStatistic
+      abis:
+        - name: StakingManager
+          file: ./abis/StakingManager.json
+      eventHandlers:
+        - event: StakingManagerStaked(indexed address,uint256)
+          handler: handleStakingManagerStaked
+        - event: StakingManagerWithdrawalInitiated(indexed address,uint256)
+          handler: handleStakingManagerWithdrawalInitiated
+        - event: StakingManagerWithdrawalCancelled(indexed address,uint256)
+          handler: handleStakingManagerWithdrawalCancelled
+        - event: StakingManagerWithdrawn(indexed address,uint256)
+          handler: handleStakingManagerWithdrawn
+        - event: StakingManagerRewardPaid(indexed address,indexed address,uint256,indexed address)
+          handler: handleStakingManagerRewardPaid
+
+  - kind: ethereum/contract
+    name: StakingManagerHaiVeloVeloLp
+    network: {{NETWORK}}
+    source:
+      address: "{{STAKING_MANAGER_HAI_VELO_VELO_LP}}"
+      abi: StakingManager
+      startBlock: {{STAKING_MANAGER_HAI_VELO_VELO_LP_START_BLOCK}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/staking/staking-manager-hai-velo-velo-lp.ts
+      entities:
+        - HaiVeloVeloLPStakingUser
+        - HaiVeloVeloLPStakingPosition
+        - HaiVeloVeloLPPendingWithdrawal
+        - HaiVeloVeloLPRewardClaim
+        - HaiVeloVeloLPStakingStatistic
       abis:
         - name: StakingManager
           file: ./abis/StakingManager.json

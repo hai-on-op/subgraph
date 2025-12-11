@@ -70,3 +70,5 @@ subgraph.yaml
 build/
 generated/
 src/utils/addresses.ts
+
+**/.DS_Store
