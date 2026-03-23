@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(chmod +x /Users/ajand/Projects/rewards-distro/subgraph/scripts/sync-tenderly-config.sh)",
-      "Bash(docker compose:*)"
+      "Bash(docker compose:*)",
+      "Bash(curl -s \"https://raw.githubusercontent.com/hai-on-op/core/feat/stability-pool-and-emissions-controller/src/contracts/stability-pool/StabilityPool.sol\")",
+      "Bash(curl -s \"https://raw.githubusercontent.com/hai-on-op/core/feat/stability-pool-and-emissions-controller/src/interfaces/IStabilityPool.sol\")",
+      "Bash(npm run:*)",
+      "Bash(npx graph:*)"
     ]
   }
 }

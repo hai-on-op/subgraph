@@ -1971,3 +1971,235 @@ type WrappedTokenUserBalance @entity {
 #   "Last updated timestamp"
 #   lastUpdatedTimestamp: BigInt!
 # }
+
+# --- Stability Pool ---
+
+type StabilityPool @entity {
+  " Singleton - contract address "
+  id: ID!
+  " Total pool shares (ERC20 total supply) "
+  totalShares: BigInt!
+  " Total HAI deposited over lifetime "
+  totalDeposited: BigInt!
+  " Total HAI withdrawn over lifetime "
+  totalWithdrawn: BigInt!
+  " Total KITE rewards claimed from emissions controller "
+  totalKiteFromEmissions: BigInt!
+  " Total KITE rewards distributed to depositors "
+  totalKiteDistributed: BigInt!
+  " Whether transfers between users are enabled "
+  transfersEnabled: Boolean!
+  " Whether KITE rewards are active "
+  kiteRewardsActive: Boolean!
+  " Number of cover-and-repay-debt operations "
+  totalAuctionsCovered: BigInt!
+  " Number of unique depositors "
+  depositorCount: BigInt!
+  " Minimum profit basis points "
+  minProfitBps: Int!
+  " All depositors "
+  depositors: [StabilityPoolDepositor!]! @derivedFrom(field: "pool")
+  " All actions "
+  actions: [StabilityPoolAction!]! @derivedFrom(field: "pool")
+  " All reward claims "
+  rewardClaims: [StabilityPoolRewardClaim!]! @derivedFrom(field: "pool")
+  " All cover events "
+  coverEvents: [CoverAndRepayDebtEvent!]! @derivedFrom(field: "pool")
+  " All strategy configs "
+  strategies: [StabilityPoolStrategy!]! @derivedFrom(field: "pool")
+}
+
+type StabilityPoolDepositor @entity {
+  " User address "
+  id: ID!
+  " Reference to the pool "
+  pool: StabilityPool!
+  " Current share balance "
+  shareBalance: BigInt!
+  " Total KITE rewards claimed "
+  totalRewardsClaimed: BigInt!
+  " Actions for this depositor "
+  actions: [StabilityPoolAction!]! @derivedFrom(field: "user")
+  " Reward claims for this depositor "
+  rewardClaims: [StabilityPoolRewardClaim!]! @derivedFrom(field: "user")
+}
+
+enum StabilityPoolActionType {
+  DEPOSIT
+  WITHDRAW
+  TRANSFER_IN
+  TRANSFER_OUT
+}
+
+type StabilityPoolAction @entity {
+  " <TX hash>-<Log index> "
+  id: ID!
+  " Reference to the pool "
+  pool: StabilityPool!
+  " User who performed the action "
+  user: StabilityPoolDepositor!
+  " DEPOSIT, WITHDRAW, TRANSFER_IN, TRANSFER_OUT "
+  type: StabilityPoolActionType!
+  " Amount of shares "
+  amount: BigInt!
+  " For transfers: the counterparty address "
+  counterparty: Bytes
+  " Timestamp [seconds] "
+  createdAt: BigInt!
+  " Block number "
+  createdAtBlock: BigInt!
+  " Transaction hash "
+  createdAtTransaction: Bytes!
+}
+
+type StabilityPoolRewardClaim @entity {
+  " <TX hash>-<Log index> "
+  id: ID!
+  " Reference to the pool "
+  pool: StabilityPool!
+  " User who claimed "
+  user: StabilityPoolDepositor!
+  " Amount of KITE claimed "
+  amount: BigInt!
+  " Timestamp [seconds] "
+  createdAt: BigInt!
+  " Block number "
+  createdAtBlock: BigInt!
+  " Transaction hash "
+  createdAtTransaction: Bytes!
+}
+
+type CoverAndRepayDebtEvent @entity {
+  " <TX hash>-<Log index> "
+  id: ID!
+  " Reference to the pool "
+  pool: StabilityPool!
+  " Auction ID "
+  auctionId: BigInt!
+  " Collateral type bytes32 "
+  collateralType: Bytes!
+  " Collateral amount bought "
+  collateralAmount: BigInt!
+  " HAI spent on the auction bid "
+  haiSpent: BigInt!
+  " HAI received from collateral conversion "
+  haiReceived: BigInt!
+  " Timestamp [seconds] "
+  createdAt: BigInt!
+  " Block number "
+  createdAtBlock: BigInt!
+  " Transaction hash "
+  createdAtTransaction: Bytes!
+}
+
+type StabilityPoolStrategy @entity {
+  " <Pool address>-<Collateral type bytes32> "
+  id: ID!
+  " Reference to the pool "
+  pool: StabilityPool!
+  " Collateral type bytes32 "
+  collateralType: Bytes!
+  " Strategy step addresses in order "
+  stepAddresses: [Bytes!]!
+  " Collateral-specific slippage in basis points "
+  slippageBps: Int!
+  " Whether the strategy is active (not cleared) "
+  active: Boolean!
+}
+
+type StabilityPoolWhitelistedStep @entity {
+  " Step address "
+  id: ID!
+  " Step contract address "
+  address: Bytes!
+  " Whether this step is currently whitelisted "
+  allowed: Boolean!
+}
+
+# --- Emissions Controller ---
+
+type EmissionsController @entity {
+  " Singleton - contract address "
+  id: ID!
+
+  # --- Emission parameters ---
+  " Total KITE allocated for emissions "
+  totalKiteAmount: BigInt!
+  " Timestamp when emissions started [seconds] "
+  emissionStartTime: BigInt!
+  " Timestamp when emissions end [seconds] "
+  emissionEndTime: BigInt!
+  " Base emission rate (KITE per second, WAD) "
+  baseEmissionRate: BigInt!
+  " Deviation limit for split adjustments (WAD) "
+  deviationLimit: BigInt!
+
+  # --- Current split and rates ---
+  " Current stability pool split (WAD) "
+  stabilityPoolSplit: BigInt!
+  " Current minting split (WAD) "
+  mintingSplit: BigInt!
+  " Current stability pool emission rate (KITE per second, WAD) "
+  currentStabilityPoolRate: BigInt!
+  " Current minting emission rate (KITE per second, WAD) "
+  currentMintingRate: BigInt!
+  " Timestamp when current rates took effect [seconds] "
+  currentRateStartTime: BigInt!
+
+  # --- Cumulative tracking ---
+  " Cumulative KITE accrued for stability pool "
+  stabilityPoolCumulativeRewards: BigInt!
+  " Cumulative KITE accrued for minting rewards "
+  mintingCumulativeRewards: BigInt!
+  " Cumulative KITE distributed as minting rewards "
+  mintingRewardsLastDistributed: BigInt!
+
+  # --- Checkpoint times ---
+  " Last time rewards were checkpointed [seconds] "
+  lastCheckpointTime: BigInt!
+  " Last time the split was updated [seconds] "
+  lastSplitUpdateTime: BigInt!
+
+  # --- Receiver and counters ---
+  " Address of stability pool rewards receiver "
+  stabilityRewardsReceiver: Bytes
+  " Total KITE claimed for stability pool (from events) "
+  totalClaimedForStabilityPool: BigInt!
+  " Total KITE distributed as minting rewards (from events) "
+  totalMintingRewardsDistributed: BigInt!
+  " Number of emissions extensions "
+  extensionCount: BigInt!
+
+  " All emission events "
+  events: [EmissionsEvent!]! @derivedFrom(field: "controller")
+}
+
+enum EmissionsEventType {
+  UPDATE_REWARD_SPLIT
+  CLAIM_REWARDS_FOR_STABILITY_POOL
+  SET_STABILITY_REWARDS_RECEIVER
+  EMERGENCY_WITHDRAW_KITE
+  EXTEND_EMISSIONS
+  MARK_MINTING_REWARDS_DISTRIBUTED
+}
+
+type EmissionsEvent @entity {
+  " <TX hash>-<Log index> "
+  id: ID!
+  " Reference to the controller "
+  controller: EmissionsController!
+  " Event type "
+  type: EmissionsEventType!
+  " Amount (context-dependent) "
+  amount: BigInt
+  " Secondary amount (for ExtendEmissions: newEndTime) "
+  amount2: BigInt
+  " Address (for SetStabilityRewardsReceiver, EmergencyWithdrawKite) "
+  address: Bytes
+  " Timestamp [seconds] "
+  createdAt: BigInt!
+  " Block number "
+  createdAtBlock: BigInt!
+  " Transaction hash "
+  createdAtTransaction: Bytes!
+}
