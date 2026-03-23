@@ -16,6 +16,8 @@
     "prepare-mainnet": "mustache config/mainnet.json subgraph.template.yaml > subgraph.yaml && mustache config/mainnet.json src/utils/addresses.template.ts > src/utils/addresses.ts",
     "prepare-optimism-goerli": "mustache config/optimism-goerli.json subgraph.template.yaml > subgraph.yaml && mustache config/optimism-goerli.json src/utils/addresses.template.ts > src/utils/addresses.ts",
     "prepare-optimism-sepolia": "mustache config/optimism-sepolia.json subgraph.template.yaml > subgraph.yaml && mustache config/optimism-sepolia.json src/utils/addresses.template.ts > src/utils/addresses.ts",
+    "sync-tenderly": "bash scripts/sync-tenderly-config.sh",
+    "prepare-tenderly": "npm run sync-tenderly && mustache config/tenderly.json subgraph.template.yaml > subgraph.yaml && mustache config/tenderly.json src/utils/addresses.template.ts > src/utils/addresses.ts",
     "update-abis": "node update_abis.js geb-subgraph/abis kovan/0.6.0",
     "test-hosted-mainnet": "ETH_RPC=https://parity0.mainnet.makerfoundation.com:8545 SUBGRAPH_NODE_URL=TODO TS_NODE_PROJECT=test/tsconfig.json mocha -r ts-node/register --timeout 5000 ./test/*.test.ts"
   },

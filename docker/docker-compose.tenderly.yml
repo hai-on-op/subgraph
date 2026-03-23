@@ -1,0 +1,12 @@
+version: '3'
+services:
+  graph-node:
+    environment:
+      ethereum: 'optimism:${TENDERLY_FORK_RPC}'
+      ETHEREUM_BLOCK_BATCH_SIZE: 10000
+      GRAPH_ETHEREUM_GENESIS_BLOCK_NUMBER: 148610000
+
+  graph-deployer:
+    environment:
+      - NETWORK=tenderly
+    command: 'docker/wait-for-it.sh\ graph-node:8020\ --timeout=60\ --\ npm\ run\ deploy-local'

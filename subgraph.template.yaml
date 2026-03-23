@@ -876,7 +876,7 @@ dataSources:
     source:
       address: "{{HAIVELO}}"
       abi: WrappedToken
-      startBlock: 19200000 # You can adjust this to when the contract was deployed
+      startBlock: {{HAIVELO_START_BLOCK}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -895,6 +895,95 @@ dataSources:
           handler: handleWrappedTokenDeposit
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleTransfer
+
+  - kind: ethereum/contract
+    name: StabilityPool
+    network: {{NETWORK}}
+    source:
+      address: "{{STABILITY_POOL}}"
+      abi: StabilityPool
+      startBlock: {{STABILITY_POOL_START_BLOCK}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/stability-pool/stability-pool.ts
+      entities:
+        - StabilityPool
+        - StabilityPoolDepositor
+        - StabilityPoolAction
+        - StabilityPoolRewardClaim
+        - CoverAndRepayDebtEvent
+        - StabilityPoolStrategy
+        - StabilityPoolWhitelistedStep
+      abis:
+        - name: StabilityPool
+          file: ./abis/StabilityPool.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+        - event: ClaimRewards(indexed address,uint256)
+          handler: handleClaimRewards
+        - event: ClaimRewardsFromEmissionsController(uint256)
+          handler: handleClaimRewardsFromEmissionsController
+        - event: CoverAndRepayDebt(indexed uint256,indexed bytes32,uint256,uint256,uint256)
+          handler: handleCoverAndRepayDebt
+        - event: TransfersEnabled()
+          handler: handleTransfersEnabled
+        - event: KiteRewardsDeactivated(uint256,uint256)
+          handler: handleKiteRewardsDeactivated
+        - event: SweepInternalCoin(uint256)
+          handler: handleSweepInternalCoin
+        - event: EmergencyWithdrawKite(indexed address,uint256)
+          handler: handleEmergencyWithdrawKite
+        - event: AddAuthorization(address)
+          handler: handleAddAuthorization
+        - event: RemoveAuthorization(address)
+          handler: handleRemoveAuthorization
+        - event: SetStrategySteps(indexed bytes32,address[])
+          handler: handleSetStrategySteps
+        - event: ClearStrategySteps(indexed bytes32)
+          handler: handleClearStrategySteps
+        - event: SetStepWhitelist(indexed address,bool)
+          handler: handleSetStepWhitelist
+        - event: SetCollateralSlippageBps(indexed bytes32,uint16)
+          handler: handleSetCollateralSlippageBps
+        - event: SetStepTypeSlippageBps(indexed bytes32,uint16)
+          handler: handleSetStepTypeSlippageBps
+        - event: SetMinProfitBps(uint16)
+          handler: handleSetMinProfitBps
+
+  - kind: ethereum/contract
+    name: EmissionsController
+    network: {{NETWORK}}
+    source:
+      address: "{{EMISSIONS_CONTROLLER}}"
+      abi: EmissionsController
+      startBlock: {{EMISSIONS_CONTROLLER_START_BLOCK}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/stability-pool/emissions-controller.ts
+      entities:
+        - EmissionsController
+        - EmissionsEvent
+      abis:
+        - name: EmissionsController
+          file: ./abis/EmissionsController.json
+      eventHandlers:
+        - event: UpdateRewardSplit(uint256,uint256)
+          handler: handleUpdateRewardSplit
+        - event: ClaimRewardsForStabilityPool(uint256)
+          handler: handleClaimRewardsForStabilityPool
+        - event: SetStabilityRewardsReceiver(address,address)
+          handler: handleSetStabilityRewardsReceiver
+        - event: EmergencyWithdrawKite(address,uint256)
+          handler: handleEmergencyWithdrawKite
+        - event: ExtendEmissions(uint256,uint256,uint256,uint256,uint256)
+          handler: handleExtendEmissions
+        - event: MarkMintingRewardsDistributed(uint256)
+          handler: handleMarkMintingRewardsDistributed
 
   # - name: StakedTokenAuctionHouse
   #   kind: ethereum/contract
