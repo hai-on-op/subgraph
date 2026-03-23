@@ -11,6 +11,7 @@ COPY subgraph.template.yaml .
 COPY schema.graphql .
 COPY src src
 COPY config config
+COPY scripts scripts
 
 RUN ls
 

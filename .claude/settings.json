@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(chmod +x /Users/ajand/Projects/rewards-distro/subgraph/scripts/sync-tenderly-config.sh)",
+      "Bash(docker compose:*)"
+    ]
+  }
+}

@@ -876,7 +876,7 @@ dataSources:
     source:
       address: "{{HAIVELO}}"
       abi: WrappedToken
-      startBlock: 19200000 # You can adjust this to when the contract was deployed
+      startBlock: {{HAIVELO_START_BLOCK}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
